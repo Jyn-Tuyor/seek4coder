@@ -1,0 +1,123 @@
+<template>
+
+  
+    <div v-html="rendered"></div>
+  <!-- <main class="flex items-center justify-center p-12 flex-col gap-12 w-screen">
+
+    <div class="w-full">
+
+      <label class="input ">
+        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </g>
+        </svg>
+        <input type="text" placeholder="Username" v-model="search_val" />
+      </label>
+
+      <button class="btn ml-2" @click="getUser">Search</button>
+
+    </div>
+
+  </main> -->
+
+</template>
+
+<script>
+// import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
+import { marked } from 'marked';
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      octokit: new Octokit({
+        auth: process.env.VUE_APP_TOKEN
+      }),
+      auth_avatar_url: '',
+      auth_username: '',
+      search_val: '',
+      searched_avatar_url: '',
+      searched_username: '',
+      readme: ''
+    }
+  },
+
+  methods: {
+    async getMe() {
+      try {
+        const response = await this.octokit.request('GET /user')
+
+        if (response.status == 200) {
+          this.auth_avatar_url = response.data.avatar_url;
+          this.auth_username = response.data.name
+        }
+
+        console.log(response)
+        this.getReadme(response.data.login)
+
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async getUser() {
+      try {
+        const response = await this.octokit.request('GET /users/{username}', {
+          username: this.search_val
+        })
+
+        if (response.status == 200) {
+          this.searched_avatar_url = response.data.avatar_url;
+          this.searched_username = response.data.name
+        }
+
+        console.log(response)
+
+        await this.getReadme();
+
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async getReadme(user) {
+      try {
+        const response = await this.octokit.request('GET /repos/{owner}/{repo}/readme', {
+          owner: user,
+          repo: user,
+          headers: { Accept: "application/vnd.github.v3+json" }
+        })
+
+        if (response.status == 200) {
+          this.searched_avatar_url = response.data.avatar_url;
+          this.searched_username = response.data.name
+        }
+
+
+        this.readme = atob(response.data.content)
+        console.log(atob(response.data.content))
+
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+
+  },
+
+  mounted() {
+    this.getMe();
+  }, 
+
+  computed: {
+    rendered() {
+      return marked(this.readme)
+    }
+  }
+}
+
+
+</script>

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "gruvbox";
+  --color-base-100: #282828;
+  --color-base-200: #32302f;
+  --color-base-300: #3c3836;
+  --color-base-content: #ebdbb2;
+
+  --color-primary: #458588;
+  --color-primary-content: #ebdbb2;
+
+  --color-secondary: #b16286;
+  --color-secondary-content: #ebdbb2;
+
+  --color-accent: #d65d0e;
+  --color-accent-content: #ebdbb2;
+
+  --color-neutral: #a89984;
+  --color-neutral-content: #ebdbb2;
+
+  --color-info: #689d6a;
+  --color-info-content: #ebdbb2;
+
+  --color-success: #98971a;
+  --color-success-content: #282828;
+
+  --color-warning: #d79921;
+  --color-warning-content: #282828;
+
+  --color-error: #cc241d;
+  --color-error-content: #ebdbb2;
+
+}
+
+body {
+  font-family: "Fira Code";
+}
