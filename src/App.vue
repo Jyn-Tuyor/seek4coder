@@ -1,16 +1,25 @@
 <template>
-
   <div class="px-12 py-8 flex gap-8">
     <label class="input">
-      <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+      <svg
+        class="h-[1em] opacity-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <g
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          stroke-width="2.5"
+          fill="none"
+          stroke="currentColor"
+        >
           <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
         </g>
       </svg>
-      <input type="text" required placeholder="Username" />
+      <input type="text" v-model="search_val" required placeholder="Username" />
     </label>
-    <button class="btn">Search</button>
+    <button @click="getUser" class="btn">Search</button>
   </div>
 
   <main class="p-8">
@@ -20,12 +29,11 @@
       </div>
     </div>
   </main>
-
 </template>
 
 <style scoped>
 .readme-container {
-  background-image: url('./assets/aero_glass.png');
+  background-image: url("./assets/aero_glass.png");
   background-size: cover;
   background-position: center;
 }
@@ -33,87 +41,79 @@
 
 <script>
 // import { Octokit } from 'octokit';
-import { Octokit } from '@octokit/rest';
-import { marked } from 'marked';
-
+import { Octokit } from "@octokit/rest";
+import { marked } from "marked";
 
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
       octokit: new Octokit({
-        auth: import.meta.env.VITE_APP_TOKEN
+        auth: import.meta.env.VITE_APP_TOKEN,
       }),
-      auth_avatar_url: '',
-      auth_username: '',
-      search_val: '',
-      searched_avatar_url: '',
-      searched_username: '',
-      readme: ''
-    }
+      auth_avatar_url: "",
+      auth_username: "",
+      search_val: "",
+      searched_avatar_url: "",
+      searched_username: "",
+      readme: "",
+    };
   },
 
   methods: {
     async getMe() {
       try {
-        const response = await this.octokit.request('GET /user')
+        const response = await this.octokit.request("GET /user");
 
         if (response.status == 200) {
           this.auth_avatar_url = response.data.avatar_url;
-          this.auth_username = response.data.name
+          this.auth_username = response.data.name;
+
+          console.log(response);
+          this.getReadme(response.data.login);
         }
-
-        console.log(response)
-        this.getReadme(response.data.login)
-
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
 
     async getUser() {
       try {
-        const response = await this.octokit.request('GET /users/{username}', {
-          username: this.search_val
-        })
+        const response = await this.octokit.request("GET /users/{username}", {
+          username: this.search_val,
+        });
 
         if (response.status == 200) {
           this.searched_avatar_url = response.data.avatar_url;
-          this.searched_username = response.data.name
+          this.searched_username = response.data.name;
+
+          console.log(response);
+          this.getReadme(response.data.login);
         }
-
-        console.log(response)
-
-        await this.getReadme();
-
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
 
     async getReadme(user) {
       try {
-        const response = await this.octokit.request('GET /repos/{owner}/{repo}/readme', {
+        const response = await this.octokit.request("GET /repos/{owner}/{repo}/readme", {
           owner: user,
           repo: user,
-          headers: { Accept: "application/vnd.github.v3+json" }
-        })
+          headers: { Accept: "application/vnd.github.v3+json" },
+        });
 
         if (response.status == 200) {
           this.searched_avatar_url = response.data.avatar_url;
-          this.searched_username = response.data.name
+          this.searched_username = response.data.name;
+
+          this.readme = atob(response.data.content);
+          console.log(atob(response.data.content));
         }
-
-
-        this.readme = atob(response.data.content)
-        console.log(atob(response.data.content))
-
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
-
-
+    },
   },
 
   mounted() {
@@ -122,10 +122,8 @@ export default {
 
   computed: {
     rendered() {
-      return marked(this.readme)
-    }
-  }
-}
-
-
+      return marked(this.readme);
+    },
+  },
+};
 </script>
