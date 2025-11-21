@@ -5,6 +5,9 @@
         <div v-if="rendered">
           <div v-html="rendered"></div>
         </div>
+        <div v-else>
+          <h4>User has no ReadMe to show</h4>
+        </div>
       </div>
     </div>
   </main>
