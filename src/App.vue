@@ -3,16 +3,14 @@
 
   <search-bar v-model="search_val" :getUser="getUser"></search-bar>
 
+  <div class="bg-base-200 w-full h-56 p-12">
+    <div>
+      <h3>{{ auth_username }}</h3>
+    </div>
+  </div>
+
   <render-markup :rendered="rendered"></render-markup>
 </template>
-
-<style scoped>
-.readme-container {
-  background-image: url("./assets/aero_glass.png");
-  background-size: cover;
-  background-position: center;
-}
-</style>
 
 <script>
 // import { Octokit } from 'octokit';

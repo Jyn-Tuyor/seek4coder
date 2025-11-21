@@ -9,6 +9,13 @@
     </div>
   </main>
 </template>
+<style scoped>
+.readme-container {
+  background-image: url("../assets/aero_glass.png");
+  background-size: cover;
+  background-position: center;
+}
+</style>
 
 <script>
 export default {
